@@ -1,57 +1,57 @@
-const shoutHelper = require('./shouts')
+const lineHelper = require('./lines')
 const Logger = require('./Logger')
 const TwitterClient = require('../config/Twitter')
 
-let attempts = 0
-
-const isGreenTime = (date) => {
-  const hour = date.getHours()
-  const minutes = date.getMinutes()
-  if (hour === 19 && minutes === 20) return true
-  return false
+const getFullLine = () => {
+  const fullLineIndex = Math.floor(Math.random() * fullLines.length);
+  return lineHelper.fullLines[fullLineIndex]
 }
 
-const getShoutType = (date) => {
-  const shoutsType = isGreenTime(date) ? shoutHelper.greenShouts : shoutHelper.shouts
-  return shoutsType
+const getGeneratedLine = () => {
+  const greetingIndex = Math.floor(Math.random() * lineHelper.greetings.length);
+	const mainIndex = Math.floor(Math.random() * lineHelper.mains.length);
+  const greeting = lineHelper.greetings[greetingIndex];
+  const mainLine = lineHelper.mains[mainIndex];
+	const hasGreetingAndMain = Math.floor(Math.random() * 4) < 3;
+	if (hasGreetingAndMain) {
+		return `${greeting} ${mainLine}`;
+	}
+	const isMainOnly = Math.floor(Math.random() * 2) !== 0;
+  return isMainOnly ? mainLine : greeting;
 }
 
-const generateShout = (emoji = false) => {
-  const shoutList = getShoutType(new Date())
-  const max = shoutList.length
-  const shoutIndex = Math.floor(Math.random() * max)
-  let generatedShout = shoutList[shoutIndex]
+const generateTweet = (emoji = false) => {
+  const isFullLine = Math.floor(Math.random() * 2) !== 0;
+  let generatedTweet = isFullLine ? getFullLine() : getGeneratedLine();
+
   if (emoji) {
-    const maxEmojiIndex = shoutHelper.fallbackEmojis.length
-    const emojiIndex = Math.floor(Math.random() * maxEmojiIndex)
-    generatedShout += ` ${shoutHelper.fallbackEmojis[emojiIndex]}`
+    const maxEmojiIndex = lineHelper.fallbackEmojis.length;
+    const emojiIndex = Math.floor(Math.random() * maxEmojiIndex);
+    generatedTweet += ` ${lineHelper.fallbackEmojis[emojiIndex]}`;
   }
-  Logger.handleLog('info', 'generateShout', `Shout: ${generatedShout}`)
-  return generatedShout
+
+  Logger.handleLog('info', 'generateTweet', `Tweet: ${generatedTweet}`);
+  return generatedTweet;
 }
 
-const postTweet = async (user = '') => {
+const postTweet = async (user = '', attempts = 1) => {
   try {
-    attempts++
-    if (attempts > 5) throw new Error('Reached maximum number of attempts')
-    let withEmoji = false
-    if (attempts > 3) {
-      withEmoji = true
-    }
+    if (attempts > 5) throw new Error('Reached maximum number of attempts');
+    const withEmoji = attempts > 3
 
-    const status = `${user} ${generateShout(withEmoji)}`.trim()
+    const status = `${user} ${generateTweet(withEmoji)}`.trim();
   
     const tweetResponse = await TwitterClient.post(
       'statuses/update',
       { status }
-    )
+    );
     
-    Logger.handleLog('info', 'postTweet', 'Tweet posted! 🦜')
-    Logger.handleLog('info', 'postTweet', tweetResponse.text)
+    Logger.handleLog('info', 'postTweet', `Tweet posted! 🦜 Tweet: ${tweetResponse.text}`);
   } catch (error) {
-    Logger.handleLog('error', 'postTweet', error, attempts)
+    Logger.handleLog('error', 'postTweet', error, attempts);
     if (error && error[0] && error[0].code === 187) {
-      await postTweet(user)
+      attempts++;
+      await postTweet(user, attempts);
     }
   }
 }
@@ -60,9 +60,9 @@ const getMentionTweets = async () => {
   try {
     return await TwitterClient.get('statuses/mentions_timeline',
       {count: 100}
-    )
+    );
   } catch (error) {
-    Logger.handleLog('error', 'getMentionTweets', error, attempts)
+    Logger.handleLog('error', 'getMentionTweets', error, 0);
     return []
   } 
 }

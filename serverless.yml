@@ -28,7 +28,7 @@ functions:
     handler: src/services/tweetSchedule.handler
     description: Function to tweet a bandeclay mixed lines message based on a schedule
     events:
-      - schedule: cron(20 * * * ? *)
+      - schedule: cron(20 0/4 * * ? *)
 
   tweetMention:
     handler: src/services/tweetMention.handler
