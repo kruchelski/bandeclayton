@@ -1,0 +1,38 @@
+service: bandeclayton
+
+frameworkVersion: '2'
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  region: ${opt:region, 'us-east-2'}
+  profile: ${env:AWS_PROFILE}
+  stage: ${opt:stage, 'dev'}
+  memorySize: 128
+  timeout: 15
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-offline-scheduler
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    host: 0.0.0.0
+
+functions:  
+  tweetSchedule:
+    handler: src/services/tweetSchedule.handler
+    description: Function to tweet a bandeclay mixed lines message based on a schedule
+    events:
+      - schedule: cron(20 * * * ? *)
+
+  tweetMention:
+    handler: src/services/tweetMention.handler
+    description: Interacts with mentions sending bandeclay mixed lines
+    timeout: 30
+    events:
+      - schedule: rate(1 minute)
