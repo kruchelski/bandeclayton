@@ -1,24 +1,24 @@
 <h1 align="center">
-  🙀 scream in despair
+  🥯 bandeclayton
 </h1>
 
-## _Desperate situations calls for desperate screams_. A simple Twitter Bot that screams every hour and reply with a scream to someone when a mention happens
+## A simple Twitter bot that tweets some mixed lines from the characters of the Breaking bad video about bandeclay. [This video (youtube)](https://www.youtube.com/watch?v=YJBe9XK_8QE)
 
 
 <!-- Infos -->
 <p align="center">
   <img src="https://img.shields.io/static/v1?labelColor=0f21a1&color=777777&label=created%20at&message=Sep%202021" alt="Creation Date" />
 
-  <img src="https://img.shields.io/github/last-commit/kruchelski/scream-in-despair?label=updated%20at&labelColor=0f21a1&color=777777" alt="Update Date" />
+  <img src="https://img.shields.io/github/last-commit/kruchelski/bandeclayton?label=updated%20at&labelColor=0f21a1&color=777777" alt="Update Date" />
 
-  <img src="https://img.shields.io/github/v/tag/kruchelski/scream-in-despair?label=latest%20version&labelColor=0f21a1&color=777777" alt="Latest Version" />
+  <img src="https://img.shields.io/github/v/tag/kruchelski/bandeclayton?label=latest%20version&labelColor=0f21a1&color=777777" alt="Latest Version" />
 
-  <img src="https://img.shields.io/github/license/kruchelski/scream-in-despair?labelColor=0f21a1&color=777777" alt="Project License" />
+  <img src="https://img.shields.io/github/license/kruchelski/bandeclayton?labelColor=0f21a1&color=777777" alt="Project License" />
 </p>
 
 #### Important Note: This is a Work in Progress. At this moment some bugs may occur
 
-#### Important Note 2: This project was done for studying purposes. The idea was based in the [endless screaming Twitter profile](https://twitter.com/infinite_scream)
+#### Important Note 2: This project was done for studying purposes.
 
 <div style="color:#333333">
 
@@ -28,12 +28,12 @@ This project was made for studying purposes. The objective is to explore the Lam
 The bot is very simple, it consists in two main Lambda functions:   
 
 1. tweetSchedule: Every hour and 20 minutes it will post an update to status based in some random functions to generate the tweet
-2. tweetMention: Every 1 minute it will retrieve the mentions and then reply to them with random screams.
+2. tweetMention: Every 1 minute it will retrieve the mentions and then reply to them with random lines from the video mentioned above.
 
 
 ### 🖥 How do these stuff work?
 
-The tweetSchedule function will be triggered by a cron expression that is configured in the serverless.yml file. the tweetMention function will be triggered by the rate expression also configured in the serverless.yml.
+The `tweetSchedule` function will be triggered by a cron expression that is configured in the `serverless.yml` file. the `tweetMention` function will be triggered by the rate expression also configured in the `serverless.yml`.
 The functions will connect to the Twitter API through te [twitter library](https://www.npmjs.com/package/twitter).
 
 ### 🚜 What is under the hood?
